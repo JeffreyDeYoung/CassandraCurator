@@ -16,6 +16,9 @@
 package com.github.cassandracurator.command;
 
 import com.github.cassandracurator.exceptions.CannotConnectException;
+import com.github.cassandracurator.exceptions.ConnectionException;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Dao for interacting with remote systems using standard terminal commands.
@@ -38,6 +41,25 @@ public interface RemoteCommandDao {
      * Sends a command to a remote system.
      * @param commandToSend String of a valid terminal command to send to the remote system.
      * @return The response from the remote system as a String.
+     * @throws ConnectionException if there is a problem with the connection.
      */
-    public String sendCommand(String commandToSend);
+    public String sendCommand(String commandToSend) throws ConnectionException;
+
+    /**
+     * Pushes a file from the local machine to the remote machine.
+     * @param localFile Local file to push.
+     * @param remotePath Path on the remote machine to push to.
+     * @throws ConnectionException if there is a problem with the connection.
+     * @throws IOException if there is a problem reading or sending the file.
+     */
+    public void pushFile(File localFile, String remotePath) throws ConnectionException, IOException;
+    
+        /**
+     * Pushes a file from the local machine to the remote machine.
+     * @param localFile Local file to write the remote file to.
+     * @param remotePathToPull File path on the remote machine to full from.
+     * @throws ConnectionException if there is a problem with the connection.
+     * @throws IOException if there is a problem pulling or writing the file.
+     */
+    public void pullFile(String remotePathToPull, File localFile) throws ConnectionException, IOException;
 }
