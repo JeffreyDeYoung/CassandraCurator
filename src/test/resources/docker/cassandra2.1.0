@@ -1,0 +1,17 @@
+FROM phusion/baseimage:0.9.17
+CMD ["/sbin/my_init"]
+RUN apt-get -y update
+RUN rm -f /etc/service/sshd/down
+RUN /usr/sbin/enable_insecure_key #allow us to use the predefined key
+RUN apt-get -y install default-jre
+RUN echo "deb http://www.apache.org/dist/cassandra/debian 21x main" | tee -a /etc/apt/sources.list.d/cassandra.sources.list
+RUN echo "deb-src http://www.apache.org/dist/cassandra/debian 21x main" | tee -a /etc/apt/sources.list.d/cassandra.sources.list
+RUN gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+RUN gpg --export --armor F758CE318D77295D | sudo apt-key add -
+RUN gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+RUN gpg --keyserver pgp.mit.edu --recv-keys 0353B12C
+RUN gpg --export --armor 0353B12C | sudo apt-key add -
+RUN apt-get -y update
+RUN apt-get -y install cassandra=2.1.0
+CMD echo "Ubuntu 15.10 is running with Docker... Image: cassandra2.1.0"
+
