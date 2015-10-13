@@ -25,4 +25,10 @@ public class ConnectionException extends Throwable{
         super(cause);
     }
     
+    
+    public ConnectionException(String message) {
+        super(message);
+    }
+    
+    
 }
