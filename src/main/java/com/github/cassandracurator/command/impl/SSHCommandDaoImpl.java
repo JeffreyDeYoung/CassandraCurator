@@ -36,13 +36,11 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
     private int port;
     private String password;
     private String pem;
+    private String pemPassphrase;
 
     private Session session = null;
 
-    //TODO: Remove
-    public SSHCommandDaoImpl() {
-    }
-
+    //TODO: Javadoc
     public SSHCommandDaoImpl(String host, String userName, int port, String password) {
         if (host == null) {
             throw new IllegalArgumentException("Host cannot be null");
@@ -62,13 +60,41 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         this.password = password;
     }
 
+    public SSHCommandDaoImpl(String host, String userName, int port, String pem, String pemPassphrase) {
+        if (host == null) {
+            throw new IllegalArgumentException("Host cannot be null");
+        }
+        this.host = host;
+        if (userName == null) {
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+        this.userName = userName;
+        if (port == 0) {
+            throw new IllegalArgumentException("Zero (0) is not a valid port");
+        }
+        this.port = port;
+        if (pem == null) {
+            throw new IllegalArgumentException("PEM cannot be null");
+        }
+        this.pem = pem;
+        this.pemPassphrase = pemPassphrase;
+
+    }
+
     @Override
     public void connect() throws CannotConnectException {
         try {
             JSch jsch = new JSch();
             session = jsch.getSession(userName, host, port);
             if (pem != null) {//if pem is present, use that
-                //TODO: finish this
+                //TODO: not sure if this is right
+                if (pemPassphrase != null) {
+                    jsch.addIdentity(pem, pemPassphrase);
+                    jsch.addIdentity(pem);
+                } else {
+                    jsch.addIdentity(pem);
+                }
+                session.setIdentityRepository(jsch.getIdentityRepository());
             } else {//if pem not present, use the password
                 session.setPassword(password);
             }
@@ -80,9 +106,9 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
 
     @Override
     public void logOff() {
-        if(session != null){
+        if (session != null) {
             session.disconnect();
-        }       
+        }
     }
 
     @Override
