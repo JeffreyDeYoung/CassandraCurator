@@ -26,7 +26,7 @@ public class DockerHelper {
         BuildImageResultCallback callback = new BuildImageResultCallback() {
             @Override
             public void onNext(BuildResponseItem item) {
-                System.out.println("" + item);
+                //System.out.println("" + item);
                 super.onNext(item);
             }
         };
