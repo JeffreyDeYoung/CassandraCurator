@@ -5,6 +5,7 @@
  */
 package com.github.cassandracurator.command.impl;
 
+import com.github.cassandracurator.testhelper.DockerHelper;
 import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -42,13 +43,13 @@ public class SSHCommandDaoImplTest {
      * Test of connect method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test
-    @Ignore
     public void testConnect() throws Exception {
         System.out.println("connect");
+        DockerHelper.spinUpDockerBox("");
         SSHCommandDaoImpl instance = null;
-        instance.connect();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+//        instance.connect();
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
     }
 
     /**
