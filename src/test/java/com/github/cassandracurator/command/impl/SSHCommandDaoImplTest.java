@@ -13,28 +13,32 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author jeffrey
  */
 public class SSHCommandDaoImplTest {
-    
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public SSHCommandDaoImplTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -45,7 +49,7 @@ public class SSHCommandDaoImplTest {
     @org.junit.Test
     public void testConnect() throws Exception {
         System.out.println("connect");
-        DockerHelper.spinUpDockerBox("");
+        DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
         SSHCommandDaoImpl instance = null;
 //        instance.connect();
 //        // TODO review the generated test code and remove the default call to fail.
@@ -110,5 +114,5 @@ public class SSHCommandDaoImplTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
+
 }
