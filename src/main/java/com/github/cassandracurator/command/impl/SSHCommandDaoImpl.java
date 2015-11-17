@@ -23,6 +23,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.File;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CommandDao implemented with SSH.
@@ -37,6 +39,11 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
     private String password;
     private String pem;
     private String pemPassphrase;
+
+    /**
+     * Logger for this class.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Session session = null;
 
@@ -83,6 +90,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
 
     @Override
     public void connect() throws CannotConnectException {
+        logger.debug("Attempting to connect to: " + host);
         try {
             JSch jsch = new JSch();
             session = jsch.getSession(userName, host, port);
