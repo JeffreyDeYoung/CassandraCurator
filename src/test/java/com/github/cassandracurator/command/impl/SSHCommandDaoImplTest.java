@@ -21,24 +21,24 @@ import org.slf4j.LoggerFactory;
  * @author jeffrey
  */
 public class SSHCommandDaoImplTest {
-
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     public SSHCommandDaoImplTest() {
     }
-
+    
     @BeforeClass
     public static void setUpClass() {
     }
-
+    
     @AfterClass
     public static void tearDownClass() {
     }
-
+    
     @Before
     public void setUp() {
     }
-
+    
     @After
     public void tearDown() {
     }
@@ -49,9 +49,15 @@ public class SSHCommandDaoImplTest {
     @org.junit.Test
     public void testConnect() throws Exception {
         System.out.println("connect");
-        DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
-        SSHCommandDaoImpl instance = null;
-//        instance.connect();
+        String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        try {
+            String ip = DockerHelper.getDockerIp(id);
+            assertNotNull(ip);
+            SSHCommandDaoImpl instance = new SSHCommandDaoImpl(ip, "root", 22, "./src/test/resources/docker/insecure_key", null);
+            //instance.connect();
+        } finally {
+            DockerHelper.spinDownDockerBox(id);
+        }
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
     }
@@ -114,5 +120,5 @@ public class SSHCommandDaoImplTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-
+    
 }
