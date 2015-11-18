@@ -18,12 +18,16 @@ package com.github.cassandracurator.command.impl;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.exceptions.CannotConnectException;
 import com.github.cassandracurator.exceptions.ConnectionException;
-import com.jcraft.jsch.HostKeyRepository;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +112,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
             } else {//if pem not present, use the password
                 session.setPassword(password);
             }
-            
+
             session.connect();
         } catch (JSchException e) {
             throw new CannotConnectException(e);
@@ -124,20 +128,52 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
 
     @Override
     public void pullFile(String remotePathToPull, File localFile) throws ConnectionException, IOException {
+        logger.trace("Pulling file: '" + remotePathToPull + "' from: " + host + " to: " + localFile.getAbsolutePath());        
         checkConnection();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp c = (ChannelSftp) channel;
+            c.get(remotePathToPull, localFile + File.separator);
+        } catch (JSchException | SftpException e) {
+            throw new ConnectionException(e);
+        }
     }
 
     @Override
     public void pushFile(File localFile, String remotePath) throws ConnectionException, IOException {
+        logger.trace("Pushing file: '" + localFile.getAbsolutePath() + "' to: " + host + ": " + remotePath);
         checkConnection();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp c = (ChannelSftp) channel;
+            c.put(localFile.getAbsolutePath(), remotePath + File.separator);
+        } catch (JSchException | SftpException e) {
+            throw new ConnectionException(e);
+        }
     }
 
     @Override
-    public String sendCommand(String commandToSend) throws ConnectionException {
+    public String sendCommand(String commandToSend) throws ConnectionException, IOException {
+        logger.trace("Sending command: '" + commandToSend + "' to server: " + host);
         checkConnection();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StringBuilder sb = new StringBuilder();
+        try {
+            Channel c = session.openChannel("exec");
+            ((ChannelExec) c).setCommand(commandToSend);
+            c.connect();
+            InputStream outputFromCommand = c.getInputStream();
+            int readByte = outputFromCommand.read();
+            while (readByte != 0xffffffff) {
+                sb.append((char) readByte);
+                readByte = outputFromCommand.read();
+            }
+            c.disconnect();
+            return sb.toString().trim();
+        } catch (JSchException e) {
+            throw new ConnectionException(e);
+        }
     }
 
     private void checkConnection() throws ConnectionException {

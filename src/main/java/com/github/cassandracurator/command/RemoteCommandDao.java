@@ -43,7 +43,7 @@ public interface RemoteCommandDao {
      * @return The response from the remote system as a String.
      * @throws ConnectionException if there is a problem with the connection.
      */
-    public String sendCommand(String commandToSend) throws ConnectionException;
+    public String sendCommand(String commandToSend) throws ConnectionException, IOException;
 
     /**
      * Pushes a file from the local machine to the remote machine.
