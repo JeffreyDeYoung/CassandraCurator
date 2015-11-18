@@ -54,12 +54,11 @@ public class SSHCommandDaoImplTest {
             String ip = DockerHelper.getDockerIp(id);
             assertNotNull(ip);
             SSHCommandDaoImpl instance = new SSHCommandDaoImpl(ip, "root", 22, "./src/test/resources/docker/insecure_key", null);
-            //instance.connect();
+            instance.connect();//mainly making sure we don't error here
+            instance.logOff();
         } finally {
             DockerHelper.spinDownDockerBox(id);
         }
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 
     /**

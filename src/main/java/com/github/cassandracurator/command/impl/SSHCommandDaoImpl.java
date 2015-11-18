@@ -18,6 +18,7 @@ package com.github.cassandracurator.command.impl;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.exceptions.CannotConnectException;
 import com.github.cassandracurator.exceptions.ConnectionException;
+import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -90,7 +91,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
 
     @Override
     public void connect() throws CannotConnectException {
-        logger.debug("Attempting to connect to: " + host);
+        logger.debug("Attempting to log on to: " + host + " via SSH.");
         try {
             JSch jsch = new JSch();
             session = jsch.getSession(userName, host, port);
@@ -102,10 +103,12 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
                 } else {
                     jsch.addIdentity(pem);
                 }
+                session.setConfig("StrictHostKeyChecking", "no");//TODO: handle this more responsibly
                 session.setIdentityRepository(jsch.getIdentityRepository());
             } else {//if pem not present, use the password
                 session.setPassword(password);
             }
+            
             session.connect();
         } catch (JSchException e) {
             throw new CannotConnectException(e);
