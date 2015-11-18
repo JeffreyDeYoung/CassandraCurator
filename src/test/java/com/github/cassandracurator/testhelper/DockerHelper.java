@@ -74,6 +74,10 @@ public class DockerHelper {
         logger.trace("Container id: " + container.getId());
         logger.trace("ImageId: " + imageId);
         docker.startContainerCmd(container.getId()).exec();
+        try {
+            Thread.sleep(1000);//sleep for a second to let it come up on line before proceeding
+        } catch (InterruptedException e) {;
+        }
         if (logger.isTraceEnabled()) {
             Info dockerInfo = docker.infoCmd().exec();
             logger.trace("Info: " + dockerInfo.toString());
@@ -85,6 +89,7 @@ public class DockerHelper {
 
     /**
      * Gets the IP address of a running docker box.
+     *
      * @param containerId Container to get the IP address of.
      * @return The IP address of the specified container.
      */
@@ -95,7 +100,9 @@ public class DockerHelper {
 
     /**
      * Determines if a box is currently running or not.
-     * @param containerId Container id of the box you wish to check if it's running or not.
+     *
+     * @param containerId Container id of the box you wish to check if it's
+     * running or not.
      * @return True if the box is running, false otherwise.
      */
     public static boolean isBoxRunning(String containerId) {
@@ -108,6 +115,7 @@ public class DockerHelper {
 
     /**
      * Spins down a docker box.
+     *
      * @param containerId Container id of the box you wish to spin down.
      */
     public static void spinDownDockerBox(String containerId) {
