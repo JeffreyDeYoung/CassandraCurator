@@ -75,7 +75,7 @@ public class DockerHelper {
         logger.trace("ImageId: " + imageId);
         docker.startContainerCmd(container.getId()).exec();
         try {
-            Thread.sleep(1000);//sleep for a second to let it come up on line before proceeding
+            Thread.sleep(1500);//sleep for a second and a half to let it come up on line before proceeding
         } catch (InterruptedException e) {;
         }
         if (logger.isTraceEnabled()) {
