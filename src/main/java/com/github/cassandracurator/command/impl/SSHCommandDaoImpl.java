@@ -32,17 +32,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CommandDao implemented with SSH.
+ * CommandDao implemented with SSH. Used for interacting with remote machines
+ * (servers) over SSH.
  *
  * @author jeffrey
  */
 public class SSHCommandDaoImpl implements RemoteCommandDao {
 
+    /**
+     * Host we are connecting to.
+     */
     private String host;
+    /**
+     * Username we are connecting with.
+     */
     private String userName;
+    /**
+     * Port that we are connecting via SSH on.
+     */
     private int port;
+    /**
+     * Password we are using.
+     */
     private String password;
+    /**
+     * PEM (private key) file we are using to connect.
+     */
     private String pem;
+    /**
+     * Password for the associated PEM file.
+     */
     private String pemPassphrase;
 
     /**
@@ -50,9 +69,18 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Current SSH session.
+     */
     private Session session = null;
 
-    //TODO: Javadoc
+    /**
+     * Constructor to use when connecting to a server over SSH when using a username and password.
+     * @param host Host (ip or DNS) that you are trying to connect to.
+     * @param userName Username that you are using to connect.
+     * @param port Port to connect to SSH over.
+     * @param password Password for the associated user.
+     */
     public SSHCommandDaoImpl(String host, String userName, int port, String password) {
         if (host == null) {
             throw new IllegalArgumentException("Host cannot be null");
@@ -72,6 +100,14 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         this.password = password;
     }
 
+    /**
+     * Constructor to use when connecting to a server over SSH when using a PEM (private key) file.
+     * @param host Host (ip or DNS) that you are trying to connect to.
+     * @param userName Username that you are using to connect.
+     * @param port Port to connect to SSH over.
+     * @param pem PEM (private key file) that you are using for authentication.
+     * @param pemPassphrase Password to the PEM file. Pass null if the PEM is not password protected.
+     */
     public SSHCommandDaoImpl(String host, String userName, int port, String pem, String pemPassphrase) {
         if (host == null) {
             throw new IllegalArgumentException("Host cannot be null");
@@ -93,6 +129,12 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
 
     }
 
+    /**
+     * Connects to a remote server via SSH.
+     *
+     * @throws CannotConnectException If there is a problem connecting to the
+     * server.
+     */
     @Override
     public void connect() throws CannotConnectException {
         logger.debug("Attempting to log on to: " + host + " via SSH.");
@@ -119,6 +161,10 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         }
     }
 
+    /**
+     * Logs off of the remote machine. Try to call in finally blocks to ensure
+     * your connection gets properly ended.
+     */
     @Override
     public void logOff() {
         if (session != null) {
@@ -126,9 +172,18 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         }
     }
 
+    /**
+     * Pulls a file from the remote to the local machine.
+     *
+     * @param localFile Local file to write the remote file to.
+     * @param remoteFileToPull File path on the remote machine to pull the file
+     * from.
+     * @throws ConnectionException if there is a problem with the connection.
+     * @throws IOException if there is a problem pulling or writing the file.
+     */
     @Override
     public void pullFile(String remoteFileToPull, File localFile) throws ConnectionException, IOException {
-        logger.trace("Pulling file: '" + remoteFileToPull + "' from: " + host + " to: " + localFile.getAbsolutePath());        
+        logger.trace("Pulling file: '" + remoteFileToPull + "' from: " + host + " to: " + localFile.getAbsolutePath());
         checkConnection();
         try {
             Channel channel = session.openChannel("sftp");
@@ -140,6 +195,14 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         }
     }
 
+    /**
+     * Pushes a file from the local machine to the remote machine.
+     *
+     * @param localFile Local file to push.
+     * @param remotePath Directory path on the remote machine to push to.
+     * @throws ConnectionException if there is a problem with the connection.
+     * @throws IOException if there is a problem reading or sending the file.
+     */
     @Override
     public void pushFile(File localFile, String remotePath) throws ConnectionException, IOException {
         logger.trace("Pushing file: '" + localFile.getAbsolutePath() + "' to: " + host + ": " + remotePath);
@@ -154,6 +217,14 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         }
     }
 
+    /**
+     * Sends a command to a remote system.
+     *
+     * @param commandToSend String of a valid terminal command to send to the
+     * remote system.
+     * @return The response from the remote system as a String.
+     * @throws ConnectionException if there is a problem with the connection.
+     */
     @Override
     public String sendCommand(String commandToSend) throws ConnectionException, IOException {
         logger.trace("Sending command: '" + commandToSend + "' to server: " + host);
@@ -176,6 +247,11 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         }
     }
 
+    /**
+     * Checks to see if we currently have a valid connection.
+     *
+     * @throws ConnectionException If we are not connected.
+     */
     private void checkConnection() throws ConnectionException {
         if (session == null || !session.isConnected()) {
             throw new ConnectionException("Not connected to server. Call connect first.");
