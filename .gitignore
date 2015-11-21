@@ -17,3 +17,6 @@ nb-configuration.xml
 
 #gedit temp files
 *~
+
+#test files
+*.fromremote

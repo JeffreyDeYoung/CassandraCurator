@@ -8,6 +8,7 @@ package com.github.cassandracurator.command.impl;
 import com.github.cassandracurator.exceptions.ConnectionException;
 import com.github.cassandracurator.testhelper.DockerHelper;
 import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -66,30 +67,48 @@ public class SSHCommandDaoImplTest {
      * Test of pullFile method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test
-    @Ignore
     public void testPullFile() throws Exception {
         System.out.println("pullFile");
-        String remotePathToPull = "";
-        File localFile = null;
-        SSHCommandDaoImpl instance = null;
-        instance.pullFile(remotePathToPull, localFile);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        File localFile = new File("./src/test/resources/testfiles/testfile.txt");
+        File fromRemote = new File("./src/test/resources/testfiles/testfile.fromremote");
+        if (fromRemote.exists()) {
+            fromRemote.delete();
+        }
+        String remotePath = "/testfile.txt";
+        String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        try {
+            String ip = DockerHelper.getDockerIp(id);
+            SSHCommandDaoImpl instance = new SSHCommandDaoImpl(ip, "root", 22, "./src/test/resources/docker/insecure_key", null);
+            instance.connect();
+            instance.pushFile(localFile, "/");//push up a test file
+            instance.pullFile(remotePath, fromRemote);//pull it back down        
+            assertTrue(fromRemote.exists());
+            assertEquals(FileUtils.readFileToString(localFile), FileUtils.readFileToString(fromRemote));
+        } finally {
+            DockerHelper.spinDownDockerBox(id);
+            fromRemote.delete();
+        }
     }
 
     /**
      * Test of pushFile method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test
-    @Ignore
     public void testPushFile() throws Exception {
-        System.out.println("pushFile");
-        File localFile = null;
-        String remotePath = "";
-        SSHCommandDaoImpl instance = null;
-        instance.pushFile(localFile, remotePath);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        System.out.println("pushFile");       
+        File localFile = new File("./src/test/resources/testfiles/testfile.txt");
+        String remotePath = "/";
+        String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        try {
+            String ip = DockerHelper.getDockerIp(id);
+            SSHCommandDaoImpl instance = new SSHCommandDaoImpl(ip, "root", 22, "./src/test/resources/docker/insecure_key", null);
+            instance.connect();
+            instance.pushFile(localFile, remotePath);
+            assertTrue(instance.sendCommand("ls /").contains("testfile.txt"));
+            assertTrue(instance.sendCommand("cat /testfile.txt").equals(FileUtils.readFileToString(localFile)));
+        } finally {
+            DockerHelper.spinDownDockerBox(id);
+        }
     }
 
     /**
@@ -131,7 +150,8 @@ public class SSHCommandDaoImplTest {
             DockerHelper.spinDownDockerBox(id);
         }
     }
-        /**
+
+    /**
      * Test of sendCommand method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test
@@ -151,12 +171,12 @@ public class SSHCommandDaoImplTest {
             DockerHelper.spinDownDockerBox(id);
         }
     }
-    
-        /**
+
+    /**
      * Test of sendCommand method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test(expected = ConnectionException.class)
-    public void testSendCommandFailure() throws Exception{
+    public void testSendCommandFailure() throws Exception {
         System.out.println("sendCommand");
         String commandToSend = "ls";
         String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
