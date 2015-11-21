@@ -16,7 +16,7 @@
 package com.github.cassandracurator.exceptions;
 
 /**
- * Exception that indicates a connection problem to a remote system.
+ * Exception that indicates a <i>connection</i> problem to a remote system.
  * @author jeffrey
  */
 public class CannotConnectException extends ConnectionException{
