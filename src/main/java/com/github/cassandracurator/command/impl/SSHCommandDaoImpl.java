@@ -75,7 +75,9 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
     private Session session = null;
 
     /**
-     * Constructor to use when connecting to a server over SSH when using a username and password.
+     * Constructor to use when connecting to a server over SSH when using a
+     * username and password.
+     *
      * @param host Host (ip or DNS) that you are trying to connect to.
      * @param userName Username that you are using to connect.
      * @param port Port to connect to SSH over.
@@ -101,12 +103,15 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
     }
 
     /**
-     * Constructor to use when connecting to a server over SSH when using a PEM (private key) file.
+     * Constructor to use when connecting to a server over SSH when using a PEM
+     * (private key) file.
+     *
      * @param host Host (ip or DNS) that you are trying to connect to.
      * @param userName Username that you are using to connect.
      * @param port Port to connect to SSH over.
      * @param pem PEM (private key file) that you are using for authentication.
-     * @param pemPassphrase Password to the PEM file. Pass null if the PEM is not password protected.
+     * @param pemPassphrase Password to the PEM file. Pass null if the PEM is
+     * not password protected.
      */
     public SSHCommandDaoImpl(String host, String userName, int port, String pem, String pemPassphrase) {
         if (host == null) {
@@ -141,6 +146,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
         try {
             JSch jsch = new JSch();
             session = jsch.getSession(userName, host, port);
+            session.setConfig("StrictHostKeyChecking", "no");//TODO: handle this more responsibly
             if (pem != null) {//if pem is present, use that
                 //TODO: not sure if this is right
                 if (pemPassphrase != null) {
@@ -149,7 +155,6 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
                 } else {
                     jsch.addIdentity(pem);
                 }
-                session.setConfig("StrictHostKeyChecking", "no");//TODO: handle this more responsibly
                 session.setIdentityRepository(jsch.getIdentityRepository());
             } else {//if pem not present, use the password
                 session.setPassword(password);

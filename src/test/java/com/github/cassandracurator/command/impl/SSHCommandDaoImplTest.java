@@ -64,6 +64,25 @@ public class SSHCommandDaoImplTest {
     }
 
     /**
+     * Test of connect method, of class SSHCommandDaoImpl. Tests the
+     * user/password alternate constructor.
+     */
+    @org.junit.Test
+    public void testConnectUserPass() throws Exception {
+        System.out.println("connect");
+        String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        try {
+            String ip = DockerHelper.getDockerIp(id);
+            assertNotNull(ip);
+            SSHCommandDaoImpl instance = new SSHCommandDaoImpl(ip, "root", 22, "test_pass");
+            instance.connect();//mainly making sure we don't error here
+            instance.logOff();
+        } finally {
+            DockerHelper.spinDownDockerBox(id);
+        }
+    }
+
+    /**
      * Test of pullFile method, of class SSHCommandDaoImpl.
      */
     @org.junit.Test
@@ -95,7 +114,7 @@ public class SSHCommandDaoImplTest {
      */
     @org.junit.Test
     public void testPushFile() throws Exception {
-        System.out.println("pushFile");       
+        System.out.println("pushFile");
         File localFile = new File("./src/test/resources/testfiles/testfile.txt");
         String remotePath = "/";
         String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
