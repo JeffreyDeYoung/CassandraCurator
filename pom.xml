@@ -49,6 +49,10 @@
             <version>2.4</version>
             <scope>test</scope><!--will probably change-->
         </dependency>
-        
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>2.1.9</version>
+        </dependency>
     </dependencies>
 </project>
