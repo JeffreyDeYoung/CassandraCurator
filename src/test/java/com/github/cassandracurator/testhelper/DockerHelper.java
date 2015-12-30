@@ -95,7 +95,9 @@ public class DockerHelper {
      */
     public static String getDockerIp(String containerId) {
         InspectContainerResponse res = docker.inspectContainerCmd(containerId).exec();
-        return res.getNetworkSettings().getIpAddress();
+        String ip = res.getNetworkSettings().getIpAddress();
+        logger.debug("IP for id: " + containerId + " is: " + ip);
+        return ip;
     }
 
     /**
