@@ -18,7 +18,7 @@ package com.github.cassandracurator.domain;
 import java.util.Objects;
 
 /**
- * Represents a single Cassandra server.
+ * Represents a single Cassandra server (node).
  *
  * @author jeffrey
  */
