@@ -15,8 +15,9 @@
  */
 package com.github.cassandracurator.command;
 
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
-
+import java.util.List;
 
 /**
  * Dao for interacting with Cassandra via CQL. This class isn't intended to be
@@ -27,10 +28,22 @@ import com.datastax.driver.core.ResultSet;
  */
 public interface CQLDao
 {
+
     /**
-     * Executes a CQL command. Reminder: this isn't intended to be efficient; it's for periodic administrative functions only.
+     * Executes a CQL command. Reminder: this isn't intended to be efficient;
+     * it's for periodic administrative functions only.
+     *
      * @param command Command to execute.
-     * @return ResultSet with the resulting response, if applicable to the command.
+     * @return ResultSet with the resulting response, if applicable to the
+     * command.
      */
     public ResultSet executeCQLCommand(String command);
+
+    /**
+     * Gets information about our keyspaces in this cluster.
+     *
+     * @return A List of KeyspaceMetadata for this cluster; each item should
+     * represent one keyspace.
+     */
+    public List<KeyspaceMetadata> getKeyspaces();
 }

@@ -25,10 +25,13 @@ import java.io.IOException;
  */
 public class CassandraCommandFunction
 {
-    public static void startCassandra(RemoteCommandDao command) throws ConnectionException, IOException, InterruptedException{
-        command.sendCommand("service cassandra start");
-        Thread.sleep(100000);
+
+    public static void startCassandra(RemoteCommandDao command) throws ConnectionException, IOException, InterruptedException
+    {
+        command.sendCommand("/etc/cassandra/setcassandraip.sh");//set the ips in the cassandra yaml correctly; I can't get the dockerfile to do this automatically
+        command.sendCommand("service cassandra start");//make the call to start cassandra
+        Thread.sleep(15000);//Sleep to let cassandra finish starting up
         //TODO: cleanup, java doc, finish, etc, not working
-                
+
     }
 }

@@ -17,6 +17,7 @@ package com.github.cassandracurator.command.impl;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.github.cassandracurator.command.CQLDao;
@@ -54,6 +55,11 @@ public class CQLDaoImpl implements CQLDao
     private Session session;
 
     /**
+     * Cassandra cluster we are connected to.
+     */
+    private Cluster cluster;
+
+    /**
      * Constructor.
      *
      * @param servers Servers we are executing the commands against. If you want
@@ -70,7 +76,7 @@ public class CQLDaoImpl implements CQLDao
             logger.debug("\t" + s.toString());
             clusterBuilder.addContactPoint(s.getIp());
         }
-        Cluster cluster = clusterBuilder.build();
+        this.cluster = clusterBuilder.build();
         this.session = cluster.connect();
     }
 
@@ -98,5 +104,17 @@ public class CQLDaoImpl implements CQLDao
     {
         logger.info("Executing CQL command: " + command);
         return session.execute(command);
+    }
+
+    /**
+     * Gets information about our keyspaces in this cluster.
+     *
+     * @return A List of KeyspaceMetadata for this cluster; each item should
+     * represent one keyspace.
+     */
+    @Override
+    public synchronized List<KeyspaceMetadata> getKeyspaces()
+    {
+        return cluster.getMetadata().getKeyspaces();
     }
 }

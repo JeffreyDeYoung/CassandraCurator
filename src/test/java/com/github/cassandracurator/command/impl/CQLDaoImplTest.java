@@ -15,6 +15,7 @@
  */
 package com.github.cassandracurator.command.impl;
 
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
@@ -77,21 +78,19 @@ public class CQLDaoImplTest
     }
 
     /**
-     * Test of executeCQLCommand method, of class CQLDaoImpl.
+     * Test of getKeyspaces method, of class CQLDaoImpl.
      */
     @Test
-    @Ignore // not done yet
-    public void testExecuteCQLCommandServersList() throws InterruptedException
+    public void testGetKeyspaces()
     {
         System.out.println("executeCQLCommandServersList");               
-        String command = "describe keyspaces";
         List<Server> servers = new ArrayList<>();
         servers.add(new Server(dockerIp, "test"));
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
         CQLDaoImpl instance = new CQLDaoImpl(servers);
-        ResultSet result = instance.executeCQLCommand(command);
+        List<KeyspaceMetadata> result = instance.getKeyspaces();
         assertNotNull(result);
-        assertTrue(result.all().size() >= 2);
+        assertTrue(result.size() >= 2);
     }
 
 }

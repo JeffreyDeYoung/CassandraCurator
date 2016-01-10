@@ -7,6 +7,8 @@ import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.BuildResponseItem;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Info;
+import com.github.dockerjava.api.model.PortBinding;
+import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.Ulimit;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -74,21 +76,14 @@ public class DockerHelper
         //higher ulimits let cassandra run (as a service? from the command line it starts up fine)
         Ulimit[] ulimits = new Ulimit[1];
         ulimits[0] = new Ulimit("nofile", 262144, 262144);
-        //open up the cassandra ports
-        ExposedPort[] portsList = new  ExposedPort[5];
-        portsList[0] = new ExposedPort(9042);
-        portsList[1] = new ExposedPort(7001);
-        portsList[2] = new ExposedPort(7000);
-        portsList[3] = new ExposedPort(9160);
-        portsList[4] = new ExposedPort(7199);
-        
+
         String imageId = docker.buildImageCmd(baseFile).exec(callback).awaitImageId();
 
         CreateContainerResponse container = docker.createContainerCmd(dockerBoxName)
                 .withCmd("/sbin/my_init")
                 .withUlimits(ulimits)
                 .withPrivileged(true)
-                .withExposedPorts(portsList)
+                .withPublishAllPorts(true)
                 .exec();
         logger.trace("Container: " + container.toString());
         logger.trace("Container id: " + container.getId());
