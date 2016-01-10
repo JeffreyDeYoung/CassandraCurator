@@ -232,7 +232,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
      */
     @Override
     public String sendCommand(String commandToSend) throws ConnectionException, IOException {
-        logger.trace("Sending command: '" + commandToSend + "' to server: " + host);
+        logger.debug("Sending command: '" + commandToSend + "' to server: " + host);
         checkConnection();
         StringBuilder sb = new StringBuilder();
         try {
@@ -246,7 +246,9 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
                 readByte = outputFromCommand.read();
             }
             c.disconnect();
-            return sb.toString().trim();
+            String response = sb.toString().trim();
+            logger.debug("Recieved Response: " + response)
+            return response;
         } catch (JSchException e) {
             throw new ConnectionException(e);
         }
