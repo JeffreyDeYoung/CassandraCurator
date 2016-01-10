@@ -188,7 +188,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
      */
     @Override
     public void pullFile(String remoteFileToPull, File localFile) throws ConnectionException, IOException {
-        logger.trace("Pulling file: '" + remoteFileToPull + "' from: " + host + " to: " + localFile.getAbsolutePath());
+        logger.debug("Pulling file: '" + remoteFileToPull + "' from: " + host + " to: " + localFile.getAbsolutePath());
         checkConnection();
         try {
             Channel channel = session.openChannel("sftp");
@@ -210,7 +210,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
      */
     @Override
     public void pushFile(File localFile, String remotePath) throws ConnectionException, IOException {
-        logger.trace("Pushing file: '" + localFile.getAbsolutePath() + "' to: " + host + ": " + remotePath);
+        logger.debug("Pushing file: '" + localFile.getAbsolutePath() + "' to: " + host + ": " + remotePath);
         checkConnection();
         try {
             Channel channel = session.openChannel("sftp");
