@@ -247,7 +247,7 @@ public class SSHCommandDaoImpl implements RemoteCommandDao {
             }
             c.disconnect();
             String response = sb.toString().trim();
-            logger.debug("Recieved Response: " + response)
+            logger.debug("Recieved Response: " + response);
             return response;
         } catch (JSchException e) {
             throw new ConnectionException(e);
