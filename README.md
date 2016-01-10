@@ -18,4 +18,6 @@ DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock"
 docker build -f ./src/test/resources/docker/cassandra2.1.0 -t cassandra2.1.0 . 
 ```
 
+If something gets weird, try restarting your docker service.
+
 (Apologies for poor formatting; will clean up later.)
