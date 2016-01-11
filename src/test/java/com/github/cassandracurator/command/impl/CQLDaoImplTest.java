@@ -16,6 +16,7 @@
 package com.github.cassandracurator.command.impl;
 
 import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.ResultSet;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
 import com.github.cassandracurator.exceptions.ConnectionException;
@@ -57,7 +58,7 @@ public class CQLDaoImplTest
     }
 
     @Before
-    public void setUp()throws ConnectionException, IOException, InterruptedException
+    public void setUp() throws ConnectionException, IOException, InterruptedException
     {
         dockerId = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
         dockerIp = DockerHelper.getDockerIp(dockerId);
@@ -81,13 +82,37 @@ public class CQLDaoImplTest
     @Test
     public void testGetKeyspaces()
     {
-        System.out.println("executeCQLCommandServersList");               
+        System.out.println("executeCQLCommandServersList");
         List<Server> servers = new ArrayList<>();
         servers.add(new Server(dockerIp, "test"));
         CQLDaoImpl instance = new CQLDaoImpl(servers);
         List<KeyspaceMetadata> result = instance.getKeyspaces();
         assertNotNull(result);
         assertTrue(result.size() >= 2);
+    }
+
+    /**
+     * Test of executeCQLCommand method, of class CQLDaoImpl.
+     */
+    @Test
+    public void testExecuteCQLCreateCommand()
+    {
+        System.out.println("executeCQLCreateCommand");
+        String command = "create keyspace test WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };";
+        List<Server> servers = new ArrayList<>();
+        servers.add(new Server(dockerIp, "test"));
+        CQLDaoImpl instance = new CQLDaoImpl(servers);
+        instance.executeCQLCommand(command);
+        List<KeyspaceMetadata> result = instance.getKeyspaces();
+        assertNotNull(result);
+        assertTrue(result.size() >= 3);
+        boolean found = false;
+        for(KeyspaceMetadata r : result){
+            if(r.getName().equals("test")){
+                found = true;
+            }
+        }
+        assertTrue("The created keyspace was not found.", found);
     }
 
 }
