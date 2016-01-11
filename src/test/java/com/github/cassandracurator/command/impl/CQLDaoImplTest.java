@@ -16,7 +16,6 @@
 package com.github.cassandracurator.command.impl;
 
 import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.ResultSet;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
 import com.github.cassandracurator.exceptions.ConnectionException;
@@ -32,7 +31,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *
@@ -86,7 +84,6 @@ public class CQLDaoImplTest
         System.out.println("executeCQLCommandServersList");               
         List<Server> servers = new ArrayList<>();
         servers.add(new Server(dockerIp, "test"));
-        //Thread.sleep(10000);
         CQLDaoImpl instance = new CQLDaoImpl(servers);
         List<KeyspaceMetadata> result = instance.getKeyspaces();
         assertNotNull(result);
