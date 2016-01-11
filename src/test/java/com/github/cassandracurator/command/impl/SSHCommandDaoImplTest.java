@@ -242,7 +242,8 @@ public class SSHCommandDaoImplTest
     /**
      * Test of not directly related to this class, but we need to test that the
      * docker file can start cassandra, and this is the earliest in the test
-     * plan that it makes sense.
+     * plan that it makes sense. If this test fails, there's a good chance that
+     * there's actually a problem with the docker image or startup process.
      */
     @org.junit.Test
     public void testStartCassandra() throws Exception
