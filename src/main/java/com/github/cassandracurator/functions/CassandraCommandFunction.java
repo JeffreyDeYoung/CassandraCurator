@@ -26,7 +26,11 @@ import java.io.IOException;
 public class CassandraCommandFunction
 {
 
+    private static final String CASSANDRA_START_COMMAND = "service cassandra start";
+    private static final String CASSANDRA_STATUS_COMMAND = "service cassandra status";
+
     private static final String EXPECTED_RUNNING_MESSAGE = "* Cassandra is running";
+
     /**
      * Starts an Cassandra service using the specified RemoteCommandDao.
      *
@@ -39,8 +43,13 @@ public class CassandraCommandFunction
      */
     public static boolean startCassandra(RemoteCommandDao command) throws ConnectionException, IOException
     {
+        if (isCassandraRunning(command))
+        {
+            return true;// don't try to start cassandra again if it's already running; will just slow us down
+        }
+        //cassandra is not currently running
         command.sendCommand("/etc/cassandra/setcassandraip.sh");//set the ips in the cassandra yaml correctly; I can't get the dockerfile to do this automatically -- this will probably bite us in the future
-        command.sendCommand("service cassandra start");//make the call to start cassandra
+        command.sendCommand(CASSANDRA_START_COMMAND);//make the call to start cassandra
         try
         {
             Thread.sleep(15000);//Sleep to let cassandra finish starting up
@@ -48,10 +57,28 @@ public class CassandraCommandFunction
         {
             throw new RuntimeException(e);//in my over 13 years working with java, I have never seen an InterruptedException thrown for calling sleep; so I think this is pretty safe.
         }
-        String statusResponse = command.sendCommand("service cassandra status");
-        if(statusResponse.equals(EXPECTED_RUNNING_MESSAGE)){
+        return isCassandraRunning(command);//check to see if we succeeded
+    }
+
+    /**
+     * Checks to see if the Cassandra service is running using the
+     * RemoteCommandDao.
+     *
+     * @param command RemoteCommandDao that is <b>already connected</b> to the
+     * server you wish to start the Cassandra instance on.
+     * @return True if Cassandra is running; false if it is not.
+     * @throws ConnectionException If we can't connect or there is an connection
+     * problem to the server.
+     * @throws IOException If there is an IO issue talking to the server.
+     */
+    public static boolean isCassandraRunning(RemoteCommandDao command) throws ConnectionException, IOException
+    {
+        String statusResponse = command.sendCommand(CASSANDRA_STATUS_COMMAND);
+        if (statusResponse.equals(EXPECTED_RUNNING_MESSAGE))
+        {
             return true;
-        } else {
+        } else
+        {
             return false;
         }
     }

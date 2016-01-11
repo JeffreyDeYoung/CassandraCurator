@@ -82,6 +82,29 @@ public class CassandraCommandFunctionTest
         boolean expResult = true;
         boolean result = CassandraCommandFunction.startCassandra(commandDao);
         assertEquals(expResult, result);
+        //run it again
+        result = CassandraCommandFunction.startCassandra(commandDao);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of isCassandraRunning method, of class CassandraCommandFunction.
+     */
+    @Test
+    public void testIsCassandraRunning() throws Exception
+    {
+        System.out.println("isCassandraRunning");
+        boolean expResult = false;
+        //make sure cassandra is not running
+        boolean result = CassandraCommandFunction.isCassandraRunning(commandDao);
+        assertEquals(expResult, result);
+        //start cassandra
+        result = CassandraCommandFunction.startCassandra(commandDao);
+        assertEquals(true, result);
+        //make sure it is now runnign
+        result = CassandraCommandFunction.isCassandraRunning(commandDao);
+        assertEquals(true, result);
+
     }
 
 }
