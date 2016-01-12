@@ -39,7 +39,7 @@ public class CassandraCommandFunction
      * @throws ConnectionException If we can't connect or there is an connection
      * problem to the server.
      * @throws IOException If there is an IO issue talking to the server.
-     * @return True if cassandra was started; false if it failed to start.
+     * @return True if Cassandra was started; false if it failed to start.
      */
     public static boolean startCassandra(RemoteCommandDao command) throws ConnectionException, IOException
     {
@@ -52,7 +52,7 @@ public class CassandraCommandFunction
         command.sendCommand(CASSANDRA_START_COMMAND);//make the call to start cassandra
         try
         {
-            Thread.sleep(17000);//Sleep to let cassandra finish starting up
+            Thread.sleep(20000);//Sleep to let cassandra finish starting up
         } catch (InterruptedException e)
         {
             throw new RuntimeException(e);//in my over 13 years working with java, I have never seen an InterruptedException thrown for calling sleep; so I think this is pretty safe.
