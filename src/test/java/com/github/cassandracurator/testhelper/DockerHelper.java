@@ -113,7 +113,7 @@ public class DockerHelper extends TestCase
             @Override
             public void onNext(BuildResponseItem item)
             {
-                //logger.debug("" + item);
+//                logger.debug("" + item);
                 super.onNext(item);
             }
         };
@@ -122,7 +122,7 @@ public class DockerHelper extends TestCase
         ulimits[0] = new Ulimit("nofile", 262144, 262144);
 
         String imageId = docker.buildImageCmd(baseFile).exec(callback).awaitImageId();
-
+        
         CreateContainerResponse container = docker.createContainerCmd(dockerBoxName)
                 .withCmd("/sbin/my_init")
                 .withUlimits(ulimits)
