@@ -1,0 +1,23 @@
+FROM phusion/baseimage:0.9.17
+CMD ["/sbin/my_init"]
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get -y update
+RUN rm -f /etc/service/sshd/down
+RUN /usr/sbin/enable_insecure_key #allow us to use the predefined key
+RUN echo "root:test_pass" | chpasswd #allow user/pass auth
+CMD echo "users setup"
+RUN echo "users setup"
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections #install java
+RUN apt-get -y install oracle-java8-installer
+#install cassandra
+RUN echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+RUN curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+RUN apt-get -y update
+RUN apt-get -y install dsc20=2.0.14-1 cassandra=2.0.14
+#copy over a script that will automatically fix the cassandra yaml's ips
+COPY ./setcassandraip.sh /etc/cassandra/setcassandraip.sh
+RUN chmod +x /etc/cassandra/setcassandraip.sh
+#set the cassandra ports as exposed
+EXPOSE 9042 7001 7000 9160 7199
+CMD echo "Ubuntu 15.10 is running with Docker... Image: cassandra2.0.14"
+
