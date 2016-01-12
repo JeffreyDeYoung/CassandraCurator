@@ -7,17 +7,19 @@ Status: In development.
 ## Building
 mvn clean install
 
-## Pre-Reqs (for testing)
+## Pre-Reqs for testing
+* A fairly powerful computer; the tests are extremely expensive.
 * Install Docker
 * Add this line to your /etc/default/docker file:
 DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock"
 * Restart Docker
 * Ensure you can run this: docker -H tcp://127.0.0.1:2375 version
-* Build the docker test box: 
+* Build the docker test boxes: 
 ```
-docker build -f ./src/test/resources/docker/cassandra2.1.0 -t cassandra2.1.0 . 
+cd /src/test/resources/docker
+./buildCassandraDockerInstances.sh
 ```
 
-If something gets weird, try restarting your docker service.
+If something gets weird (memory, lag, etc), try restarting your docker service.
 
 (Apologies for poor formatting; will clean up later.)
