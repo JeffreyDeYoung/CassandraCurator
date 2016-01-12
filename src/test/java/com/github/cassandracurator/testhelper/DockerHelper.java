@@ -11,20 +11,27 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import java.io.File;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import junit.framework.TestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class for helping spin up and down docker instances.
+ * Class for helping spin up and down docker instances. Note: this is also a
+ * test class for itself.
  *
  * @author jeffrey
  */
-public class DockerHelper
+@RunWith(value = Parameterized.class)
+public class DockerHelper extends TestCase
 {
 
     /**
@@ -42,6 +49,46 @@ public class DockerHelper
      * Docker client. Shared with all methods in this class.
      */
     private static final DockerClient docker = DockerClientBuilder.getInstance(config).build();
+
+    /**
+     * Docker file that this particular test is running with.
+     */
+    private final File dockerFile;
+
+    /**
+     * Constructor. For testing THIS class only. This helper is also a test
+     * class for itself. To use this as a simple helper, just call the static
+     * methods. The only reason this constructor exists is to provide a
+     * constructor for the parameterized tests.
+     *
+     * @param dockerFile DockerFile to test against.
+     */
+    public DockerHelper(File dockerFile)
+    {
+        this.dockerFile = dockerFile;
+    }
+
+    @Parameters(name = "Cassandra file: {0}")
+    public static final Collection<File[]> generateDockerFileNames()
+    {
+        File dir = new File("./src/test/resources/docker/");
+        File[] cassandraDockerFiles = dir.listFiles(new FilenameFilter()
+        {
+
+            @Override
+            public boolean accept(File dir, String name)
+            {
+                return (name.startsWith("cassandra") && !name.endsWith("~"));//cassandra docker boxes that are not gedit backups                
+            }
+        });
+        List<File[]> toReturn = new ArrayList<>();
+        for(File f : cassandraDockerFiles){
+            File[] fileArray = new File[1];
+            fileArray[0] = f;
+            toReturn.add(fileArray);
+        }
+        return toReturn;
+    }
 
     /**
      * Spins up a new docker box. Important: don't forget to spin it back down
@@ -150,8 +197,8 @@ public class DockerHelper
     @Test
     public void testCycle() throws Exception
     {
-        logger.info("Testing docker helper.");
-        String id = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        logger.info("Testing docker helper. " + dockerFile.getName());
+        String id = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
         assertTrue(DockerHelper.isBoxRunning(id));
         assertNotNull(DockerHelper.getDockerIp(id));
         DockerHelper.spinDownDockerBox(id);
@@ -161,9 +208,9 @@ public class DockerHelper
     @Test
     public void testCycleTwoBoxes() throws Exception
     {
-        logger.info("Testing docker helper with two boxes.");
-        String id1 = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
-        String id2 = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        logger.info("Testing docker helper with two boxes. "  + dockerFile.getName());
+        String id1 = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        String id2 = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
         assertTrue(DockerHelper.isBoxRunning(id1));
         assertTrue(DockerHelper.isBoxRunning(id2));
         assertNotNull(DockerHelper.getDockerIp(id1));

@@ -14,8 +14,10 @@ RUN echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /e
 RUN curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 RUN apt-get -y update
 RUN apt-get -y install dsc21=2.1.0-1 cassandra=2.1.0-2
+#copy over a script that will automatically fix the cassandra yaml's ips
 COPY ./setcassandraip.sh /etc/cassandra/setcassandraip.sh
 RUN chmod +x /etc/cassandra/setcassandraip.sh
+#set the cassandra ports as exposed
 EXPOSE 9042 7001 7000 9160 7199
 CMD echo "Ubuntu 15.10 is running with Docker... Image: cassandra2.1.0"
 
