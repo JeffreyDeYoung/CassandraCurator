@@ -23,10 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -101,7 +101,7 @@ public class CassandraCommandFunctionTest
         //start cassandra
         result = CassandraCommandFunction.startCassandra(commandDao);
         assertEquals(true, result);
-        //make sure it is now runnign
+        //make sure it is now running
         result = CassandraCommandFunction.isCassandraRunning(commandDao);
         assertEquals(true, result);
 
