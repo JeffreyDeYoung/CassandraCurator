@@ -52,7 +52,7 @@ public class CassandraCommandFunction
         command.sendCommand(CASSANDRA_START_COMMAND);//make the call to start cassandra
         try
         {
-            Thread.sleep(25000);//Sleep to let cassandra finish starting up
+            Thread.sleep(30000);//Sleep to let cassandra finish starting up
         } catch (InterruptedException e)
         {
             throw new RuntimeException(e);//in my over 13 years working with java, I have never seen an InterruptedException thrown for calling sleep; so I think this is pretty safe.
