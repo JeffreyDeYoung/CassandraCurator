@@ -16,17 +16,16 @@
 package com.github.cassandracurator.command.impl;
 
 import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.ResultSet;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
 import com.github.cassandracurator.exceptions.ConnectionException;
 import com.github.cassandracurator.functions.CassandraCommandFunction;
+import com.github.cassandradockertesthelper.cassandradockertesthelper.CassandraDockerParameterizedTestParent;
 import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,14 +36,15 @@ import static org.junit.Assert.*;
  *
  * @author jeffrey
  */
-public class CQLDaoImplTest
+public class CQLDaoImplTest extends CassandraDockerParameterizedTestParent
 {
 
     private String dockerIp = null;
     private String dockerId = null;
 
-    public CQLDaoImplTest()
+    public CQLDaoImplTest(File dockerFile)
     {
+        super(dockerFile);//call to super class to actually setup this test.
     }
 
     @BeforeClass
@@ -60,20 +60,11 @@ public class CQLDaoImplTest
     @Before
     public void setUp() throws ConnectionException, IOException, InterruptedException
     {
-        dockerId = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        dockerId = super.spinUpNewCassandraDockerBox();
         dockerIp = DockerHelper.getDockerIp(dockerId);
         RemoteCommandDao commandDao = new SSHCommandDaoImpl(dockerIp, "root", 22, "./src/test/resources/docker/insecure_key", null);
         commandDao.connect();
         CassandraCommandFunction.startCassandra(commandDao);
-    }
-
-    @After
-    public void tearDown()
-    {
-        if (dockerId != null)
-        {
-            DockerHelper.spinDownDockerBox(dockerId);
-        }
     }
 
     /**
@@ -107,8 +98,10 @@ public class CQLDaoImplTest
         assertNotNull(result);
         assertTrue(result.size() >= 3);
         boolean found = false;
-        for(KeyspaceMetadata r : result){
-            if(r.getName().equals("test")){
+        for (KeyspaceMetadata r : result)
+        {
+            if (r.getName().equals("test"))
+            {
                 found = true;
             }
         }
