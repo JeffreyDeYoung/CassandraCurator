@@ -14,11 +14,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Note: this class is intentionally not parameterized; there is nothing
+ * Cassandra version specific here, so we don't want to waste 15 minutes of test time by
+ * testing it over and over again.
  *
  * @author jeffrey
  */
