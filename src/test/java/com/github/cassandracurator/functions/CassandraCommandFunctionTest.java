@@ -18,10 +18,10 @@ package com.github.cassandracurator.functions;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.command.impl.SSHCommandDaoImpl;
 import com.github.cassandracurator.exceptions.ConnectionException;
-import com.github.cassandracurator.testhelper.DockerHelper;
+import com.github.cassandradockertesthelper.cassandradockertesthelper.CassandraDockerParameterizedTestParent;
+import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.io.IOException;
-import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -32,15 +32,16 @@ import org.junit.Test;
  *
  * @author jeffrey
  */
-public class CassandraCommandFunctionTest
+public class CassandraCommandFunctionTest extends CassandraDockerParameterizedTestParent
 {
 
     private String dockerIp = null;
     private String dockerId = null;
     private RemoteCommandDao commandDao = null;
 
-    public CassandraCommandFunctionTest()
+    public CassandraCommandFunctionTest(File dockerFile)
     {
+        super(dockerFile);//call to super class to actually setup this test.
     }
 
     @BeforeClass
@@ -56,29 +57,20 @@ public class CassandraCommandFunctionTest
     @Before
     public void setUp() throws ConnectionException, IOException, InterruptedException
     {
-        dockerId = DockerHelper.spinUpDockerBox("cassandra2.1.0", new File("./src/test/resources/docker/cassandra2.1.0"));
+        dockerId = super.spinUpNewCassandraDockerBox();
         dockerIp = DockerHelper.getDockerIp(dockerId);
         commandDao = new SSHCommandDaoImpl(dockerIp, "root", 22, "./src/test/resources/docker/insecure_key", null);
         commandDao.connect();
 
     }
-
-    @After
-    public void tearDown()
-    {
-        if (dockerId != null)
-        {
-            DockerHelper.spinDownDockerBox(dockerId);
-        }
-    }
-
+    
     /**
      * Test of startCassandra method, of class CassandraCommandFunction.
      */
     @Test
     public void testStartCassandra() throws Exception
     {
-        System.out.println("startCassandra");
+        System.out.println("startCassandra version: " + super.getCassandraVersion());
         boolean expResult = true;
         boolean result = CassandraCommandFunction.startCassandra(commandDao);
         assertEquals(expResult, result);
@@ -93,7 +85,7 @@ public class CassandraCommandFunctionTest
     @Test
     public void testIsCassandraRunning() throws Exception
     {
-        System.out.println("isCassandraRunning");
+        System.out.println("isCassandraRunning version: " + super.getCassandraVersion());
         boolean expResult = false;
         //make sure cassandra is not running
         boolean result = CassandraCommandFunction.isCassandraRunning(commandDao);

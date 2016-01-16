@@ -21,7 +21,7 @@ import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
 import com.github.cassandracurator.exceptions.ConnectionException;
 import com.github.cassandracurator.functions.CassandraCommandFunction;
-import com.github.cassandracurator.testhelper.DockerHelper;
+import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
