@@ -6,7 +6,7 @@
 package com.github.cassandracurator.command.impl;
 
 import com.github.cassandracurator.exceptions.ConnectionException;
-import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
+import com.github.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

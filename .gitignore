@@ -14,6 +14,7 @@ hs_err_pid*
 
 #netbeans files
 nb-configuration.xml
+nbactions.xml
 
 #gedit temp files
 *~

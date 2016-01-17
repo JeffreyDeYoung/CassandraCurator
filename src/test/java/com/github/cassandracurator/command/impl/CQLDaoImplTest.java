@@ -20,8 +20,8 @@ import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.domain.Server;
 import com.github.cassandracurator.exceptions.ConnectionException;
 import com.github.cassandracurator.functions.CassandraCommandFunction;
-import com.github.cassandradockertesthelper.cassandradockertesthelper.CassandraDockerParameterizedTestParent;
-import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
+import com.github.cassandradockertesthelper.AbstractCassandraDockerParameterizedTest;
+import com.github.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author jeffrey
  */
-public class CQLDaoImplTest extends CassandraDockerParameterizedTestParent
+public class CQLDaoImplTest extends AbstractCassandraDockerParameterizedTest
 {
 
     private String dockerIp = null;

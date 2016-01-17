@@ -18,8 +18,8 @@ package com.github.cassandracurator.functions;
 import com.github.cassandracurator.command.RemoteCommandDao;
 import com.github.cassandracurator.command.impl.SSHCommandDaoImpl;
 import com.github.cassandracurator.exceptions.ConnectionException;
-import com.github.cassandradockertesthelper.cassandradockertesthelper.CassandraDockerParameterizedTestParent;
-import com.github.cassandradockertesthelper.cassandradockertesthelper.DockerHelper;
+import com.github.cassandradockertesthelper.AbstractCassandraDockerParameterizedTest;
+import com.github.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.io.IOException;
 import org.junit.AfterClass;
@@ -32,7 +32,7 @@ import org.junit.Test;
  *
  * @author jeffrey
  */
-public class CassandraCommandFunctionTest extends CassandraDockerParameterizedTestParent
+public class CassandraCommandFunctionTest extends AbstractCassandraDockerParameterizedTest
 {
 
     private String dockerIp = null;
