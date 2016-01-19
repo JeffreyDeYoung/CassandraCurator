@@ -16,7 +16,7 @@
 package com.github.cassandracurator.command;
 
 /**
- * Dao for executing remote Cassandra commands. Mostly nodetool related action.
+ * Dao for executing remote Cassandra commands. Mostly nodetool related actions.
  * @author jeffrey
  */
 public interface CassandraCommandDao
